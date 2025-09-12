@@ -1,0 +1,16 @@
+/* Set the map containers to a specific height */
+#map, #adminMap {
+    height: 85vh; /* 85% of the viewport height */
+    width: 100%;
+    z-index: 1;
+}
+
+/* Optional: Style for different vehicle icons on the map */
+.bus-marker {
+    /* We'll create these with Leaflet icon URLs in the JS */
+}
+
+.alert {
+    border-radius: 0;
+    margin-bottom: 0;
+}
