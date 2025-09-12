@@ -1,0 +1,22 @@
+{
+  "vehicles": [
+    {
+      "type": "Bus",
+      "number": "101",
+      "route": "Railway Station to Bus Stand",
+      "status": "on_time"
+    },
+    {
+      "type": "Shared Auto",
+      "number": "",
+      "route": "Main Market Circular",
+      "status": "moving"
+    },
+    {
+      "type": "Shared Van",
+      "number": "15",
+      "route": "City Perimeter",
+      "status": "delayed"
+    }
+  ]
+}
