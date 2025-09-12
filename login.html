@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Track Karo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-light">
+    <div class="container vh-100 d-flex align-items-center justify-content-center">
+        <div class="card shadow" style="width: 24rem;">
+            <div class="card-body p-4">
+                <!-- Logo/Brand -->
+                <div class="text-center mb-4">
+                    <h2>🚌 Track Karo</h2>
+                    <p class="text-muted">Admin Portal</p>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm" action="admin.html" method="get"> <!-- Simple action to redirect to admin.html on submit -->
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" required placeholder="Enter admin username">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" required placeholder="Enter password">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                </form>
+
+                <hr>
+                <div class="text-center">
+                    <a href="index.html" class="text-decoration-none">← Back to Live Map</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
