@@ -1,150 +1,88 @@
-// js/script.js
-// Wait for the page to fully load before running the map script
+// js/script.js - SIMULATED/PROTOTYPE VERSION
 document.addEventListener('DOMContentLoaded', function() {
 
-    // 1. Initialize the Map centered on a tier-2 city (e.g., Patiala, Punjab)
-    const map = L.map('map').setView([30.3398, 76.3869], 13); // Coordinates for Patiala
-
-    // Add OpenStreetMap tiles (free to use)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-
-    // 2. Create custom icons for different vehicle types
-    const busIcon = L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
-    });
-
-    const autoIcon = L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
-    });
-
-    const vanIcon = L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
-    });
-
-    // 3. Define fake routes (line coordinates) for different vehicles
-    const busRoute = [
-        [30.3500, 76.3650], // Start point
-        [30.3450, 76.3800],
-        [30.3400, 76.3900], // Railway Station (approx)
-        [30.3350, 76.4000],
-        [30.3300, 76.4100]  // End point
+    // 1. Fake Coordinates for Gwalior (Adjust based on your map image!)
+    // These are percentages of the map container's width/height, not real lat/long!
+    const busStops = [
+        { x: 20, y: 80 },  // Stop 1
+        { x: 40, y: 60 },  // Stop 2
+        { x: 60, y: 40 },  // Stop 3 (Main Market)
+        { x: 80, y: 20 }   // Stop 4
     ];
 
-    const autoRoute = [
-        [30.3480, 76.3700],
-        [30.3420, 76.3850], // Main Market (approx)
-        [30.3380, 76.3950],
-        [30.3320, 76.4050]
+    const autoStops = [
+        { x: 10, y: 10 },
+        { x: 30, y: 30 },
+        { x: 50, y: 50 }, // Railway Station
+        { x: 70, y: 70 }
     ];
 
-    const vanRoute = [
-        [30.3520, 76.3600],
-        [30.3470, 76.3750],
-        [30.3430, 76.3880],
-        [30.3370, 76.3980]
-    ];
-
-    // Draw the routes on the map as grey lines
-    L.polyline(busRoute, {color: 'blue'}).addTo(map);
-    L.polyline(autoRoute, {color: 'green'}).addTo(map);
-    L.polyline(vanRoute, {color: 'orange'}).addTo(map);
-
-    // 4. Add markers for important stops (e.g., Railway Station, Main Market)
-    const mainStops = [
+    // 2. Create Vehicle Objects with their fake routes
+    const vehicles = [
         {
-            name: "Patiala Railway Station",
-            position: [30.3400, 76.3900]
+            type: 'bus',
+            number: '101',
+            stops: busStops,
+            currentStopIndex: 0,
+            element: null // Will hold the HTML element
         },
         {
-            name: "Main Market",
-            position: [30.3420, 76.3850]
+            type: 'auto',
+            number: '',
+            stops: autoStops,
+            currentStopIndex: 0,
+            element: null
         }
     ];
 
-    mainStops.forEach(stop => {
-        L.marker(stop.position)
-            .addTo(map)
-            .bindPopup(`<b>${stop.name}</b>`);
-    });
-
-    // 5. Create live vehicle markers and add them to the map
-    const liveVehicles = [
-        {
-            type: "Bus",
-            number: "101",
-            route: busRoute,
-            marker: L.marker(busRoute[0], {icon: busIcon}).addTo(map),
-            currentIndex: 0
-        },
-        {
-            type: "Shared Auto",
-            number: "",
-            route: autoRoute,
-            marker: L.marker(autoRoute[0], {icon: autoIcon}).addTo(map),
-            currentIndex: 0
-        },
-        {
-            type: "Shared Van",
-            number: "15",
-            route: vanRoute,
-            marker: L.marker(vanRoute[0], {icon: vanIcon}).addTo(map),
-            currentIndex: 0
-        }
-    ];
-
-    // Add popups to each vehicle marker
-    liveVehicles.forEach(vehicle => {
-        vehicle.marker.bindPopup(`<b>${vehicle.type} ${vehicle.number}</b>`);
-    });
-
-    // 6. Function to simulate live movement
-    function moveVehicles() {
-        liveVehicles.forEach(vehicle => {
-            // Move to the next point on the route
-            vehicle.currentIndex = (vehicle.currentIndex + 1) % vehicle.route.length;
-            const nextPosition = vehicle.route[vehicle.currentIndex];
-            
-            // Smoothly animate the marker to the new position
-            vehicle.marker.setLatLng(nextPosition);
-            
-            // Update the popup with the new location
-            vehicle.marker.setPopupContent(`<b>${vehicle.type} ${vehicle.number}</b><br>Moving to next stop...`);
-        });
-
-        // Update the ETAs in the Live List sidebar (simplified)
-        updateETAs();
+    // 3. Function to create a marker on the static map
+    function createMarker(vehicle) {
+        const mapContainer = document.getElementById('static-map-container');
+        const marker = document.createElement('div');
+        
+        marker.classList.add('moving-marker');
+        marker.classList.add(vehicle.type + '-marker');
+        marker.id = vehicle.type + '-' + vehicle.number;
+        
+        mapContainer.appendChild(marker);
+        return marker;
     }
 
-    // 7. Simple function to update the ETAs in the sidebar (fake logic)
+    // 4. Function to move a vehicle to its next stop
+    function moveVehicle(vehicle) {
+        // Get the next stop coordinates
+        const nextStop = vehicle.stops[vehicle.currentStopIndex];
+        
+        // Position the marker (using % of container size)
+        vehicle.element.style.left = nextStop.x + '%';
+        vehicle.element.style.top = nextStop.y + '%';
+        
+        // Update the index for the next move
+        vehicle.currentStopIndex = (vehicle.currentStopIndex + 1) % vehicle.stops.length;
+    }
+
+    // 5. Initialize all vehicles
+    vehicles.forEach(vehicle => {
+        vehicle.element = createMarker(vehicle);
+        moveVehicle(vehicle); // Place them at their first stop
+    });
+
+    // 6. Move all vehicles every 3 seconds
+    setInterval(function() {
+        vehicles.forEach(moveVehicle);
+        updateETAs(); // Also update the sidebar ETAs
+    }, 3000);
+
+    // 7. Simple function to update the ETAs in the sidebar
     function updateETAs() {
-        // This is a simplified example. In a real app, you would calculate real ETAs.
         document.querySelectorAll('.badge').forEach((badge, index) => {
             const times = ["5 min", "7 min", "DUE", "12 min", "15 min"];
-            badge.textContent = times[index];
+            // Just cycle through the times to simulate changing data
+            badge.textContent = times[Math.floor(Math.random() * times.length)];
         });
     }
 
-    // 8. Move vehicles every 5 seconds to simulate live tracking
-    setInterval(moveVehicles, 5000);
-
-    // 9. Add a click event to the "Plan My Route" button
+    // 8. Add a click event to the "Plan My Route" button
     document.querySelector('.btn-primary.w-100').addEventListener('click', function() {
         const fromInput = document.getElementById('fromInput').value;
         const toInput = document.getElementById('toInput').value;
